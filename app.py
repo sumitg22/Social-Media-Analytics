@@ -12,3 +12,64 @@ st.set_page_config(
 st.title("🎬 Shri Balaji Entertainment")
 st.subheader("Social Media Performance Dashboard")
 st.markdown("---")
+
+# Load data
+from io import StringIO
+
+data = """Date,Content_Type,Topic,Likes,Comment,Views
+01-06-2026,Reel,Promo,27,1,1600
+31-05-2026,Reel,Announcement,12600,360,410000
+30-05-2026,Reel,Promo,50,3,3600
+29-05-2026,Reel,Promo,49,8,2600
+28-05-2026,Reel,Announcement,1190,41,187000
+27-05-2026,Post,Announcement,15400,109,159000
+26-05-2026,Post,Announcement,103,10,8879
+25-05-2026,Post,Announcement,4400,140,134000
+24-05-2026,Reel,Promo,48,7,4300
+18-05-2026,Post,Announcement,26100,911,532000
+14-05-2026,Reel,Artist Feature,1714,46,16582
+11-05-2026,Post,Promo,59,5,1857
+08-05-2026,Reel,Concert Promo,3455,143,83011
+06-05-2026,Reel,Behind Scenes,225,11,15815
+04-05-2026,Reel,Promo,55,6,1931
+02-05-2026,Post,Concert Promo,1430,63,35170
+30-04-2026,Reel,Promo,235,26,17454
+29-04-2026,Reel,Promo,123,8,5469
+28-04-2026,Post,Announcement,2797,106,62037
+26-04-2026,Reel,Promo,102,14,6364
+25-04-2026,Reel,Promo,46,4,2000
+22-04-2026,Reel,Concert Promo,1134,51,28939
+21-04-2026,Post,Announcement,6570,148,154548
+18-04-2026,Reel,Concert Promo,300,9,8487
+16-04-2026,Reel,Artist Feature,232,8,3935
+13-04-2026,Reel,Promo,42,6,2330
+12-04-2026,Post,Promo,29,1,1856
+10-04-2026,Reel,Audience Reaction,4211,215,115715
+09-04-2026,Reel,Promo,32,4,2161
+07-04-2026,Reel,Announcement,902,34,21841
+05-04-2026,Post,Artist Feature,4101,144,38044
+02-04-2026,Reel,Promo,55,4,2094
+30-03-2026,Post,Concert Promo,1934,67,23667
+28-03-2026,Reel,Promo,21,2,712
+27-03-2026,Post,Announcement,2557,64,49134
+26-03-2026,Reel,Behind Scenes,72,6,2922
+23-03-2026,Reel,Artist Feature,389,12,6247
+20-03-2026,Reel,Promo,90,5,2794
+17-03-2026,Reel,Promo,41,4,1699
+15-03-2026,Reel,Promo,52,6,2117
+12-03-2026,Reel,Promo,41,3,2064
+09-03-2026,Reel,Announcement,35000,1353,713800
+06-03-2026,Reel,Announcement,4835,162,109505
+05-03-2026,Reel,Promo,28,1,1487
+04-03-2026,Reel,Behind Scenes,128,13,4163
+03-03-2026,Post,Song Launch,533,24,7102
+02-03-2026,Post,Song Launch,2228,55,22376
+28-02-2026,Reel,Concert Promo,300,12,7700
+26-02-2026,Reel,Promo,23,3,1356
+23-02-2026,Reel,Promo,78,7,5925"""
+
+df = pd.read_csv(StringIO(data))
+df['Date'] = pd.to_datetime(df['Date'], format='%d-%m-%Y')
+df['Engagement_Rate'] = ((df['Likes'] + df['Comment']) / df['Views'] * 100).round(2)
+df['Day_of_Week'] = df['Date'].dt.day_name()
+df['Month'] = df['Date'].dt.to_period('M').astype(str)
