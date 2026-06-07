@@ -94,4 +94,61 @@ with col4:
     st.metric("Best Day to Post", best_day)
 
 st.markdown("---")
+# Charts section
+st.subheader("📈 Content Performance Analysis")
 
+col1, col2 = st.columns(2)
+
+with col1:
+    avg_views = df.groupby('Topic')['Views'].mean().sort_values(ascending=False)
+    fig1 = px.bar(
+        x=avg_views.index,
+        y=avg_views.values,
+        title="Average Views by Topic",
+        labels={'x': 'Topic', 'y': 'Average Views'},
+        color=avg_views.values,
+        color_continuous_scale='Oranges'
+    )
+    st.plotly_chart(fig1, use_container_width=True)
+
+with col2:
+    avg_engagement = df.groupby('Topic')['Engagement_Rate'].mean().sort_values(ascending=False)
+    fig2 = px.bar(
+        x=avg_engagement.index,
+        y=avg_engagement.values,
+        title="Engagement Rate by Topic (%)",
+        labels={'x': 'Topic', 'y': 'Engagement Rate'},
+        color=avg_engagement.values,
+        color_continuous_scale='Greens'
+    )
+    st.plotly_chart(fig2, use_container_width=True)
+
+st.markdown("---")
+
+col3, col4 = st.columns(2)
+
+with col3:
+    day_order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
+    avg_views_day = df.groupby('Day_of_Week')['Views'].mean().reindex(day_order)
+    fig3 = px.bar(
+        x=avg_views_day.index,
+        y=avg_views_day.values,
+        title="Best Days to Post",
+        labels={'x': 'Day', 'y': 'Average Views'},
+        color=avg_views_day.values,
+        color_continuous_scale='Blues'
+    )
+    st.plotly_chart(fig3, use_container_width=True)
+
+with col4:
+    monthly_views = df.groupby('Month')['Views'].sum().reset_index()
+    fig4 = px.line(
+        monthly_views,
+        x='Month',
+        y='Views',
+        title="Monthly Views Trend",
+        markers=True
+    )
+    st.plotly_chart(fig4, use_container_width=True)
+
+st.markdown("---")
