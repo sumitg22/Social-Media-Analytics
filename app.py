@@ -14,8 +14,6 @@ st.subheader("Social Media Performance Dashboard")
 st.markdown("---")
 
 # Load data
-from io import StringIO
-
 data = """Date,Content_Type,Topic,Likes,Comment,Views
 01-06-2026,Reel,Promo,27,1,1600
 31-05-2026,Reel,Announcement,12600,360,410000
@@ -74,27 +72,24 @@ df['Engagement_Rate'] = ((df['Likes'] + df['Comment']) / df['Views'] * 100).roun
 df['Day_of_Week'] = df['Date'].dt.day_name()
 df['Month'] = df['Date'].dt.to_period('M').astype(str)
 
-# Summary metrics row
+# Metrics row
 st.subheader("📊 Overall Performance")
-
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.metric("Total Posts", len(df))
-
 with col2:
     st.metric("Avg Views per Post", f"{int(df['Views'].mean()):,}")
-
 with col3:
     best_topic = df.groupby('Topic')['Views'].mean().idxmax()
     st.metric("Best Performing Topic", best_topic)
-
 with col4:
     best_day = df.groupby('Day_of_Week')['Views'].mean().idxmax()
     st.metric("Best Day to Post", best_day)
 
 st.markdown("---")
-# Charts section
+
+# Charts
 st.subheader("📈 Content Performance Analysis")
 
 col1, col2 = st.columns(2)
@@ -122,6 +117,7 @@ with col2:
         color_continuous_scale='Greens'
     )
     st.plotly_chart(fig2, use_container_width=True, key="fig2")
+
 st.markdown("---")
 
 col3, col4 = st.columns(2)
@@ -138,6 +134,7 @@ with col3:
         color_continuous_scale='Blues'
     )
     st.plotly_chart(fig3, use_container_width=True, key="fig3")
+
 with col4:
     monthly_views = df.groupby('Month')['Views'].sum().reset_index()
     fig4 = px.line(
@@ -148,62 +145,29 @@ with col4:
         markers=True
     )
     st.plotly_chart(fig4, use_container_width=True, key="fig4")
-st.markdown("---")
-# Charts section
-st.subheader("📈 Content Performance Analysis")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    avg_views = df.groupby('Topic')['Views'].mean().sort_values(ascending=False)
-    fig1 = px.bar(
-        x=avg_views.index,
-        y=avg_views.values,
-        title="Average Views by Topic",
-        labels={'x': 'Topic', 'y': 'Average Views'},
-        color=avg_views.values,
-        color_continuous_scale='Oranges'
-    )
-    st.plotly_chart(fig1, use_container_width=True)
-
-with col2:
-    avg_engagement = df.groupby('Topic')['Engagement_Rate'].mean().sort_values(ascending=False)
-    fig2 = px.bar(
-        x=avg_engagement.index,
-        y=avg_engagement.values,
-        title="Engagement Rate by Topic (%)",
-        labels={'x': 'Topic', 'y': 'Engagement Rate'},
-        color=avg_engagement.values,
-        color_continuous_scale='Greens'
-    )
-    st.plotly_chart(fig2, use_container_width=True)
 
 st.markdown("---")
 
-col3, col4 = st.columns(2)
+# Filter and table
+st.subheader("🔍 Filter by Content Type")
+content_types = ['All'] + list(df['Content_Type'].unique())
+selected_type = st.selectbox("Select Content Type", content_types)
 
-with col3:
-    day_order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']
-    avg_views_day = df.groupby('Day_of_Week')['Views'].mean().reindex(day_order)
-    fig3 = px.bar(
-        x=avg_views_day.index,
-        y=avg_views_day.values,
-        title="Best Days to Post",
-        labels={'x': 'Day', 'y': 'Average Views'},
-        color=avg_views_day.values,
-        color_continuous_scale='Blues'
-    )
-    st.plotly_chart(fig3, use_container_width=True)
+if selected_type == 'All':
+    filtered_df = df
+else:
+    filtered_df = df[df['Content_Type'] == selected_type]
 
-with col4:
-    monthly_views = df.groupby('Month')['Views'].sum().reset_index()
-    fig4 = px.line(
-        monthly_views,
-        x='Month',
-        y='Views',
-        title="Monthly Views Trend",
-        markers=True
-    )
-    st.plotly_chart(fig4, use_container_width=True)
+st.subheader("📋 Detailed Performance Table")
+summary = filtered_df.groupby('Topic').agg(
+    Total_Posts=('Topic', 'count'),
+    Avg_Views=('Views', 'mean'),
+    Avg_Likes=('Likes', 'mean'),
+    Avg_Comments=('Comment', 'mean'),
+    Avg_Engagement_Rate=('Engagement_Rate', 'mean')
+).round(2).sort_values('Avg_Views', ascending=False)
+
+st.dataframe(summary, use_container_width=True)
 
 st.markdown("---")
+st.caption("Dashboard built by Sumit | Data: Shri Balaji Entertainment | Tools: Python, Pandas, Plotly, Streamlit")
