@@ -109,7 +109,7 @@ with col1:
         color=avg_views.values,
         color_continuous_scale='Oranges'
     )
-    st.plotly_chart(fig1, use_container_width=True)
+    st.plotly_chart(fig1, use_container_width=True, key="fig1")
 
 with col2:
     avg_engagement = df.groupby('Topic')['Engagement_Rate'].mean().sort_values(ascending=False)
@@ -121,8 +121,7 @@ with col2:
         color=avg_engagement.values,
         color_continuous_scale='Greens'
     )
-    st.plotly_chart(fig2, use_container_width=True)
-
+    st.plotly_chart(fig2, use_container_width=True, key="fig2")
 st.markdown("---")
 
 col3, col4 = st.columns(2)
@@ -138,8 +137,7 @@ with col3:
         color=avg_views_day.values,
         color_continuous_scale='Blues'
     )
-    st.plotly_chart(fig3, use_container_width=True)
-
+    st.plotly_chart(fig3, use_container_width=True, key="fig3")
 with col4:
     monthly_views = df.groupby('Month')['Views'].sum().reset_index()
     fig4 = px.line(
@@ -149,8 +147,7 @@ with col4:
         title="Monthly Views Trend",
         markers=True
     )
-    st.plotly_chart(fig4, use_container_width=True)
-
+    st.plotly_chart(fig4, use_container_width=True, key="fig4")
 st.markdown("---")
 # Charts section
 st.subheader("📈 Content Performance Analysis")
